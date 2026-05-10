@@ -1,67 +1,69 @@
-# Credit Card Fraud Detection: End-to-End Financial Intelligence Pipeline
+# 💳 Credit Card Fraud Detection: End-to-End Machine Learning Pipeline
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![XGBoost](https://img.shields.io/badge/XGBoost-2C2C2C?style=for-the-badge&logo=xgboost&logoColor=white)
-![Power BI](https://img.shields.io/badge/Power_BI-F2C811?style=for-the-badge&logo=power-bi&logoColor=black)
 ![Scikit-Learn](https://img.shields.io/badge/Scikit_Learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
-![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+![Power BI](https://img.shields.io/badge/Power_BI-F2C811?style=for-the-badge&logo=power-bi&logoColor=black)
+![Machine Learning](https://img.shields.io/badge/Machine_Learning-Blue?style=for-the-badge&logo=scikit-learn&logoColor=white)
 
-## 📌 Project Overview
-This project addresses the critical challenge of identifying fraudulent activities within massive synthetic financial datasets (**PaySim**). Spanning **6.3 million transactions**, the objective was to build a robust detection pipeline that minimizes false negatives while maintaining high computational efficiency.
+## 1. Project Overview
+This project addresses high-frequency financial fraud detection using the **PaySim synthetic dataset**. With over **6.3 million transactions**, the challenge was to navigate an extreme class imbalance (0.13%) to build a model capable of identifying fraudulent transfers and cash-outs with near-perfect recall.
+## 📊 Dashboard Preview
+![Financial Fraud Dashboard](Screenshot%20(487).jpg)
+## 2. Dataset Description
+* **Source:** PaySim Synthetic Financial Datasets
+* **Scale:** 6,362,620 transactions / 11 Columns
+* **Imbalance:** 8,213 Fraudulent cases (0.13%) vs. 6,354,407 Valid transactions.
+* **Key Features:** Transaction type, amount, origin/destination balances, and temporal steps.
 
-The solution integrates a **supervised XGBoost model** for high-precision detection and an **unsupervised Isolation Forest model** to demonstrate the necessity of labeled data in complex fraud environments.
+## 3. Data Cleaning & Preprocessing
+* **Path Resolution:** Utilized raw string literals to handle Windows directory structures.
+* **Feature Dropping:** Systematically removed `isFlaggedFraud`, `nameOrig`, and `nameDest` to prevent model overfitting on non-predictive identifiers.
+* **Temporal Mapping:** Preserved the `step` column to derive cyclical patterns.
 
----
+## 4. Advanced Feature Engineering
+To move beyond raw data, I engineered domain-specific features that significantly increased model signal:
+* **`balance_diff_orig`**: Captured the exact delta in sender accounts.
+* **`balance_diff_dest`**: Monitored recipient account influx.
+* **`orig_zero_after`**: A binary indicator for accounts completely liquidated (Top Predictor).
+* **`hour`**: Derived from `step % 24` to identify high-risk time windows.
 
-## 📂 Repository Structure & Document List
-The following files represent the full technical lifecycle of the project:
+## 5. Exploratory Data Analysis (EDA)
+* **Correlation Analysis:** Identified perfect multi-collinearity between `oldbalanceOrg` and `newbalanceOrig`, guiding feature selection.
+* **Categorical Insights:** Discovered that **100% of fraud** is concentrated in `TRANSFER` and `CASH_OUT` types.
+* **Distribution:** Leveraged Histplots to visualize extreme outliers in transaction amounts.
 
-1.  **`CREDIT CARD FRAUD DETECTION Project file.ipynb`**: The primary Python notebook containing data cleaning, feature engineering, and model training.
-2.  **`xgb_fraud_model.pkl`**: Serialized XGBoost model optimized for extreme class imbalance.
-3.  **`iso_forest_model.pkl`**: Serialized Isolation Forest model used for anomaly benchmarking.
-4.  **`fraud_dashboard_data.csv`**: The refined dataset containing all engineered features, exported for Power BI.
-5.  **`model_comparison.csv`**: A comparative analysis of Precision, Recall, and F1-Scores.
-6.  **`feature_importance.csv`**: Exported weights of variables that contributed most to the model's decisions.
-7.  **`Screenshot (486).png` & `Screenshot (487).jpg`**: Visual documentation of the local development environment and final dashboard layout.
+## 6. Machine Learning Strategy
+I implemented a dual-modeling approach to benchmark supervised vs. unsupervised performance:
+* **XGBoost (Supervised):** Configured with `scale_pos_weight` to mathematically prioritize the minority class.
+* **Isolation Forest (Unsupervised):** Utilized with a `contamination` parameter of 0.0013 as a baseline for anomaly detection.
 
----
+## 7. Model Results
+The performance metrics highlight the superiority of cost-sensitive supervised learning for this domain:
 
-## 📊 Power BI Decision Support Dashboard
-The final phase of the project translates model outputs into actionable business intelligence.
+| Metric | XGBoost (Supervised) | Isolation Forest (Unsupervised) |
+| :--- | :--- | :--- |
+| **ROC-AUC** | **0.9998** | 0.51 |
+| **Fraud Recall** | **1.00 (99.5%)** | 0.03 |
+| **Precision** | 0.21 (Trade-off for Security) | 0.01 |
+| **False Negatives** | **Only 8 cases missed** | 1,590 cases missed |
 
-* **Design Theme**: "Executive Slate" / Clean Corporate Dark (#0D1117).
-* **Key Metrics (KPIs)**: Total Transactions (6.36M), Total Fraud Cases (~8K), Total Fraud Amount ($12.06bn), and a verified **ROC-AUC of 0.9998**.
-* **Visual Logic**:
-    * **Line Chart**: Temporal analysis of fraud by "Hour of Day," revealing specific high-risk windows.
-    * **Clustered Bar Chart**: Fraud distribution by transaction type (identifying **CASH_OUT** and **TRANSFER** as the high-risk zones).
-    * **DAX Implementation**: Custom measures for Fraud Rate %, Transaction Volume, and Total Impact.
+> **Technical Note:** In fraud detection, **Recall is King**. The XGBoost model successfully flagged nearly all fraud, accepting a higher false-positive rate as a necessary trade-off for financial security.
 
----
+## 8. Power BI Decision Support Dashboard
+The model outputs were integrated into a professional "Executive Slate" dashboard for stakeholder monitoring.
+* **KPIs:** Total Transactions, Fraud Rate %, Total Fraud Impact ($12.06bn).
+* **Visuals:** Fraud by Hour (Line), Transaction Volume by Type (Treemap), and Balance Drain Analysis.
+* **Aesthetics:** High-contrast Dark Mode (#0D1117) for SOC (Security Operations Center) environments.
 
-## ⚙️ Technical Methodology & Findings
+## 9. Project Deliverables
+* **`CREDIT CARD FRAUD DETECTION Project file.ipynb`**: Full Python Pipeline.
+* **`xgb_fraud_model.pkl`**: Optimized production-ready model.
+* **`fraud_dashboard_data.csv`**: Engineered dataset for BI reporting.
+* **`model_comparison.csv`**: Comparative statistical performance logs.
+* **`feature_importance.csv`**: Ranking of predictive variables.
 
-### **Advanced Feature Engineering**
-The model's high accuracy is attributed to domain-specific feature engineering rather than raw data:
-* **`balance_diff_orig`**: Quantifies the delta in the origin account.
-* **`orig_zero_after`**: A binary flag for accounts completely emptied (a primary fraud indicator).
-* **`hour`**: Derived from the `step` column to capture time-based fraud patterns.
-
-### **Model Performance & Insights**
-* **XGBoost (Supervised)**: Utilizing `scale_pos_weight` to handle the 0.13% class imbalance, the model achieved a **1.00 Recall for Fraud**, missing only 8 cases out of 1,643 in the test set.
-* **Isolation Forest (Unsupervised)**: With a recall of only 0.03, this comparison validates that in financial fraud, labeled supervised learning is significantly more effective than pure anomaly detection.
-* **Key Discovery**: 100% of fraud occurred within `TRANSFER` and `CASH_OUT` types. `DEBIT`, `PAYMENT`, and `CASH_IN` showed zero fraudulent activity, allowing for streamlined monitoring rules.
-
----
-
-## 🛠️ Tech Stack
-* **Language**: Python 3.x
-* **Libraries**: XGBoost, Scikit-Learn, Pandas, NumPy, Matplotlib, Seaborn
-* **Analytics**: Power BI Desktop (DAX, Power Query)
-* **Environment**: Jupyter Notebook / Windows File System
-
----
-
-## 🚀 How to Use
-1.  **Clone the Repo**: Download all project files.
-2.  **Run the Notebook**: Execute the `.ipynb` file to see the data transformation and model evaluation.
-3.  **Open Dashboard**: Use Power BI Desktop to open the provided dataset and view the visual report.
+## 10. Key Findings
+1. **Engineered Signal:** Engineered features (`balance_diff_orig`) outperformed all raw dataset columns in predictive weight.
+2. **Operational Efficiency:** By filtering for `CASH_OUT` and `TRANSFER` types, the computational load for real-time monitoring can be reduced by 50%.
+3. **Imbalance Mitigation:** `scale_pos_weight` proved more effective than oversampling (SMOTE) for maintaining feature distribution integrity in this high-dimensional dataset.

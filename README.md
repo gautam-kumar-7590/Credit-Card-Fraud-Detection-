@@ -15,6 +15,7 @@ A complete end-to-end ML pipeline to detect fraudulent financial transactions on
 **Final deliverables:** a trained XGBoost model (`.pkl`), an Isolation Forest baseline (`.pkl`), a fraud analytics Power BI dashboard, and a full engineered dataset exported to CSV.
 
 ---
+![Dashboard](Screenshot(486).png)
 
 ## 2. Business Problem
 
@@ -23,6 +24,7 @@ A complete end-to-end ML pipeline to detect fraudulent financial transactions on
 In fintech and digital payments, fraud detection operates under extreme class imbalance. Missing a fraud case is far more costly than a false positive. This model is calibrated to **maximize recall for fraud (Class 1)**, accepting precision trade-offs to flag as many genuine fraud cases as possible before funds clear.
 
 ---
+![Imbalance Data](imblanace%20data%20plot.png)
 
 ## 3. Dataset
 
@@ -39,7 +41,7 @@ In fintech and digital payments, fraud detection operates under extreme class im
 Download the dataset from Kaggle: 👉 https://www.kaggle.com/datasets/ealaxi/paysim1
 
 ---
-
+![Target Distribution](Target%20plot.png)
 ## 4. Technology Stack
 
 | Category | Tools & Libraries |
@@ -55,7 +57,7 @@ Download the dataset from Kaggle: 👉 https://www.kaggle.com/datasets/ealaxi/pa
 | Environment | VS Code + Jupyter Notebook |
 
 ---
-
+![Screenshot 440](Screenshot%20(440).png)
 ## 5. Data Preprocessing & Feature Engineering
 
 - **Windows Path Fix:** Loaded 470MB CSV using raw string path to avoid backslash errors
@@ -78,7 +80,9 @@ Download the dataset from Kaggle: 👉 https://www.kaggle.com/datasets/ealaxi/pa
 XGBoost selected as final model. Isolation Forest's 3% recall intentionally demonstrates why labeled fraud data is worth collecting.
 
 ---
-
+![XGBoost Feature Importance](XGBOOST%20plot%20acc.png)
+![Isolation Forest](iso_forest%20plot.png)
+![Screenshot 444](Screenshot%20(444).png)
 ## 7. Key Challenges & Solutions
 
 | Challenge | Root Cause | Solution |
@@ -116,7 +120,7 @@ Train/Test Split:  80/20
 - `balance_diff_orig` ranked #1 in feature importance, `orig_zero_after` ranked #2 — both engineered features
 
 ---
-
+![XGBoost Feature Importance](XGBOOST%20plot%20acc.png)
 ## 9. Key Insights
 
 - **Fraud is type-specific:** CASH_OUT and TRANSFER account for 100% of all fraud — DEBIT, PAYMENT, CASH_IN have zero fraud cases

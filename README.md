@@ -15,7 +15,7 @@ A complete end-to-end ML pipeline to detect fraudulent financial transactions on
 **Final deliverables:** a trained XGBoost model (`.pkl`), an Isolation Forest baseline (`.pkl`), a fraud analytics Power BI dashboard, and a full engineered dataset exported to CSV.
 
 ---
-![Dashboard](Screenshot(486).png)
+![Dashboard](Screenshot (486).png)
 
 ## 2. Business Problem
 

@@ -1,69 +1,156 @@
-# 💳 Credit Card Fraud Detection: End-to-End Machine Learning Pipeline
+# Credit Card Fraud Detection
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![XGBoost](https://img.shields.io/badge/XGBoost-2C2C2C?style=for-the-badge&logo=xgboost&logoColor=white)
-![Scikit-Learn](https://img.shields.io/badge/Scikit_Learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
-![Power BI](https://img.shields.io/badge/Power_BI-F2C811?style=for-the-badge&logo=power-bi&logoColor=black)
-![Machine Learning](https://img.shields.io/badge/Machine_Learning-Blue?style=for-the-badge&logo=scikit-learn&logoColor=white)
+> End-to-End Machine Learning Project | Python · XGBoost · Isolation Forest · Power BI
+
+**Author:** Gautam Kumar Kanojia | **GitHub:** [gautam-kumar-7590](https://github.com/gautam-kumar-7590) | **LinkedIn:** [GautamKumarKanojia](https://www.linkedin.com/in/GautamKumarKanojia) | progautam54@gmail.com
+
+![Python](https://img.shields.io/badge/Python-3.13-blue?style=flat&logo=python&logoColor=white) ![XGBoost](https://img.shields.io/badge/XGBoost-Supervised-orange?style=flat) ![IsolationForest](https://img.shields.io/badge/Isolation%20Forest-Unsupervised-purple?style=flat) ![Pandas](https://img.shields.io/badge/Pandas-Data%20Manipulation-150458?style=flat) ![NumPy](https://img.shields.io/badge/NumPy-Numerical-013243?style=flat) ![Matplotlib](https://img.shields.io/badge/Matplotlib-Visualization-11557c?style=flat) ![Seaborn](https://img.shields.io/badge/Seaborn-Visualization-4c8cbf?style=flat) ![Power BI](https://img.shields.io/badge/Power%20BI-Dashboard-F2C811?style=flat) ![Joblib](https://img.shields.io/badge/Joblib-Model%20Persistence-green?style=flat) ![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-F37626?style=flat) ![VS Code](https://img.shields.io/badge/VS%20Code-IDE-007ACC?style=flat) ![ROC-AUC](https://img.shields.io/badge/ROC--AUC-0.9998-brightgreen?style=flat) ![Fraud Recall](https://img.shields.io/badge/Fraud%20Recall-1.00-brightgreen?style=flat) ![Dataset](https://img.shields.io/badge/Dataset-6.3M%20Transactions-red?style=flat) ![License](https://img.shields.io/badge/License-MIT-lightgrey?style=flat)
+
+---
 
 ## 1. Project Overview
-This project addresses high-frequency financial fraud detection using the **PaySim synthetic dataset**. With over **6.3 million transactions**, the challenge was to navigate an extreme class imbalance (0.13%) to build a model capable of identifying fraudulent transfers and cash-outs with near-perfect recall.
-## 📊 Dashboard Preview
-![Financial Fraud Dashboard](Screenshot%20(487).jpg)
-## 2. Dataset Description
-* **Source:** PaySim Synthetic Financial Datasets
-* **Scale:** 6,362,620 transactions / 11 Columns
-* **Imbalance:** 8,213 Fraudulent cases (0.13%) vs. 6,354,407 Valid transactions.
-* **Key Features:** Transaction type, amount, origin/destination balances, and temporal steps.
 
-## 3. Data Cleaning & Preprocessing
-* **Path Resolution:** Utilized raw string literals to handle Windows directory structures.
-* **Feature Dropping:** Systematically removed `isFlaggedFraud`, `nameOrig`, and `nameDest` to prevent model overfitting on non-predictive identifiers.
-* **Temporal Mapping:** Preserved the `step` column to derive cyclical patterns.
+A complete end-to-end ML pipeline to detect fraudulent financial transactions on a massively imbalanced dataset of 6.3 million synthetic transactions. Built on the PaySim dataset, this project covers the full data science workflow — EDA, feature engineering, supervised and unsupervised modeling, and a Power BI dark-theme fintech dashboard.
 
-## 4. Advanced Feature Engineering
-To move beyond raw data, I engineered domain-specific features that significantly increased model signal:
-* **`balance_diff_orig`**: Captured the exact delta in sender accounts.
-* **`balance_diff_dest`**: Monitored recipient account influx.
-* **`orig_zero_after`**: A binary indicator for accounts completely liquidated (Top Predictor).
-* **`hour`**: Derived from `step % 24` to identify high-risk time windows.
+**Final deliverables:** a trained XGBoost model (`.pkl`), an Isolation Forest baseline (`.pkl`), a fraud analytics Power BI dashboard, and a full engineered dataset exported to CSV.
 
-## 5. Exploratory Data Analysis (EDA)
-* **Correlation Analysis:** Identified perfect multi-collinearity between `oldbalanceOrg` and `newbalanceOrig`, guiding feature selection.
-* **Categorical Insights:** Discovered that **100% of fraud** is concentrated in `TRANSFER` and `CASH_OUT` types.
-* **Distribution:** Leveraged Histplots to visualize extreme outliers in transaction amounts.
+---
 
-## 6. Machine Learning Strategy
-I implemented a dual-modeling approach to benchmark supervised vs. unsupervised performance:
-* **XGBoost (Supervised):** Configured with `scale_pos_weight` to mathematically prioritize the minority class.
-* **Isolation Forest (Unsupervised):** Utilized with a `contamination` parameter of 0.0013 as a baseline for anomaly detection.
+## 2. Business Problem
 
-## 7. Model Results
-The performance metrics highlight the superiority of cost-sensitive supervised learning for this domain:
+> *"With 6.3 million daily transactions and a fraud rate under 0.2%, how do we catch fraudsters before the money is gone — without drowning analysts in false alarms?"*
 
-| Metric | XGBoost (Supervised) | Isolation Forest (Unsupervised) |
-| :--- | :--- | :--- |
-| **ROC-AUC** | **0.9998** | 0.51 |
-| **Fraud Recall** | **1.00 (99.5%)** | 0.03 |
-| **Precision** | 0.21 (Trade-off for Security) | 0.01 |
-| **False Negatives** | **Only 8 cases missed** | 1,590 cases missed |
+In fintech and digital payments, fraud detection operates under extreme class imbalance. Missing a fraud case is far more costly than a false positive. This model is calibrated to **maximize recall for fraud (Class 1)**, accepting precision trade-offs to flag as many genuine fraud cases as possible before funds clear.
 
-> **Technical Note:** In fraud detection, **Recall is King**. The XGBoost model successfully flagged nearly all fraud, accepting a higher false-positive rate as a necessary trade-off for financial security.
+---
 
-## 8. Power BI Decision Support Dashboard
-The model outputs were integrated into a professional "Executive Slate" dashboard for stakeholder monitoring.
-* **KPIs:** Total Transactions, Fraud Rate %, Total Fraud Impact ($12.06bn).
-* **Visuals:** Fraud by Hour (Line), Transaction Volume by Type (Treemap), and Balance Drain Analysis.
-* **Aesthetics:** High-contrast Dark Mode (#0D1117) for SOC (Security Operations Center) environments.
+## 3. Dataset
 
-## 9. Project Deliverables
-* **`CREDIT CARD FRAUD DETECTION Project file.ipynb`**: Full Python Pipeline.
-* **`xgb_fraud_model.pkl`**: Optimized production-ready model.
-* **`fraud_dashboard_data.csv`**: Engineered dataset for BI reporting.
-* **`model_comparison.csv`**: Comparative statistical performance logs.
-* **`feature_importance.csv`**: Ranking of predictive variables.
+| Attribute | Detail |
+|---|---|
+| Source | PaySim Synthetic Financial Dataset (Kaggle) |
+| Total Transactions | 6,362,620 |
+| Fraud Cases | 8,213 (0.13% — severe imbalance) |
+| File Size | ~470MB CSV |
+| Target Variable | `isFraud` — 0 = Legitimate, 1 = Fraud |
+| Fraud Transaction Types | CASH_OUT and TRANSFER only |
+| Features | 10 raw columns (step, type, amount, balances, flags) |
 
-## 10. Key Findings
-1. **Engineered Signal:** Engineered features (`balance_diff_orig`) outperformed all raw dataset columns in predictive weight.
-2. **Operational Efficiency:** By filtering for `CASH_OUT` and `TRANSFER` types, the computational load for real-time monitoring can be reduced by 50%.
-3. **Imbalance Mitigation:** `scale_pos_weight` proved more effective than oversampling (SMOTE) for maintaining feature distribution integrity in this high-dimensional dataset.
+Download the dataset from Kaggle: 👉 https://www.kaggle.com/datasets/ealaxi/paysim1
+
+---
+
+## 4. Technology Stack
+
+| Category | Tools & Libraries |
+|---|---|
+| Language | Python 3.13 |
+| Data Manipulation | Pandas, NumPy |
+| Machine Learning | XGBoost, Scikit-learn |
+| Unsupervised Baseline | Isolation Forest (sklearn) |
+| Model Evaluation | classification_report, roc_auc_score, ConfusionMatrixDisplay |
+| Visualization | Matplotlib, Seaborn |
+| Dashboard | Power BI Desktop |
+| Model Persistence | Joblib (.pkl) |
+| Environment | VS Code + Jupyter Notebook |
+
+---
+
+## 5. Data Preprocessing & Feature Engineering
+
+- **Windows Path Fix:** Loaded 470MB CSV using raw string path to avoid backslash errors
+- **Column Drops:** Removed `isFlaggedFraud`, `nameOrig`, `nameDest` via safe list comprehension
+- **Categorical Encoding:** `type` encoded with `pd.get_dummies(drop_first=True)` — no scaling needed for tree-based models
+- **Balance Features:** `balance_diff_orig` and `balance_diff_dest` — captures how much money moved relative to starting balance
+- **Zero Balance Flags:** `orig_zero_after` and `dest_zero_before` — binary flags for accounts drained to zero or funded from zero
+- **Time Feature:** `hour` derived from `step % 24` — captures intraday fraud patterns
+- **No Scaling Applied:** Both models are tree-based — scaling adds no value
+
+---
+
+## 6. Models Trained & Comparison
+
+| Model | Type | ROC-AUC | Fraud Recall | Fraud Precision | Notes |
+|---|---|---|---|---|---|
+| XGBoost | Supervised | **0.9998** | **1.00** | 0.21 | Final model — scale_pos_weight for imbalance |
+| Isolation Forest | Unsupervised | — | 0.03 | — | Baseline — contamination=0.0013 |
+
+XGBoost selected as final model. Isolation Forest's 3% recall intentionally demonstrates why labeled fraud data is worth collecting.
+
+---
+
+## 7. Key Challenges & Solutions
+
+| Challenge | Root Cause | Solution |
+|---|---|---|
+| Severe class imbalance | 0.13% fraud rate | `scale_pos_weight` in XGBoost + `stratify=y` in split |
+| 470MB file load on Windows | Backslash path issue | Raw string path `r"C:\..."` |
+| High false positives | Precision 0.21 — 6,022 FPs | Accepted tradeoff — recall is primary objective |
+| Unsupervised baseline failure | No labels → no signal | Isolation Forest at 3% recall proves supervised approach is essential |
+| Perfectly correlated features | `oldbalanceOrg` & `newbalanceOrig` at 1.0 | Retained — tree models handle collinearity; engineered deltas add new signal |
+
+---
+
+## 8. Final Model Performance
+
+**XGBoost Configuration:**
+```
+Algorithm:         XGBoost Classifier
+scale_pos_weight:  ~770 (ratio of negatives to positives)
+stratify:          y (preserves fraud ratio in train/test split)
+Train/Test Split:  80/20
+```
+
+**Classification Report (Test Set):**
+
+| Class | Precision | Recall | F1-Score |
+|---|---|---|---|
+| Legitimate (Class 0) | 1.00 | 1.00 | 1.00 |
+| Fraud (Class 1) | 0.21 | 1.00 | 0.35 |
+| **ROC-AUC** | | **0.9998** | |
+
+**Key Observations:**
+- Model identifies **100% of actual fraud cases** — only 8 of 1,643 fraud cases missed on test set
+- ROC-AUC of **0.9998** on a 0.13% imbalanced dataset validates `scale_pos_weight` as the right imbalance strategy over SMOTE
+- 6,022 false positives — acceptable where missing fraud is far costlier than a false alert
+- `balance_diff_orig` ranked #1 in feature importance, `orig_zero_after` ranked #2 — both engineered features
+
+---
+
+## 9. Key Insights
+
+- **Fraud is type-specific:** CASH_OUT and TRANSFER account for 100% of all fraud — DEBIT, PAYMENT, CASH_IN have zero fraud cases
+- **Fraud peaks at specific hours:** Actionable for real-time alert systems and transaction monitoring
+- **Feature engineering beat raw data:** Both top features were engineered — domain knowledge adds real signal
+- **Labeled data is worth it:** XGBoost 100% recall vs Isolation Forest 3% recall — direct quantified argument for investing in fraud labeling pipelines
+
+---
+
+## 10. Project Deliverables
+
+| File | Description |
+|---|---|
+| `CREDIT_CARD_FRAUD_DETECTION_Project_file.ipynb` | Complete Jupyter Notebook with all code, outputs, and analysis |
+| `xgb_fraud_model.pkl` | Saved XGBoost model via Joblib |
+| `iso_forest_model.pkl` | Saved Isolation Forest baseline model |
+| `fraud_dashboard_data.csv` | Full engineered dataset for Power BI |
+| `model_comparison.csv` | Precision, recall, F1 for both models |
+| `feature_importance.csv` | XGBoost feature importance scores |
+
+---
+
+## 11. How to Run
+
+**Prerequisites:**
+```
+pip install pandas numpy xgboost scikit-learn matplotlib seaborn joblib
+```
+
+1. Clone the repository and navigate to the project folder
+2. Download the PaySim dataset from Kaggle and place the CSV in the project folder
+3. Open `CREDIT_CARD_FRAUD_DETECTION_Project_file.ipynb` in VS Code or Jupyter and run all cells sequentially
+4. Open the Power BI `.pbix` file in Power BI Desktop to explore the dashboard
+
+---
+
+*Gautam Kumar Kanojia* | [GitHub: gautam-kumar-7590](https://github.com/gautam-kumar-7590) | [LinkedIn: GautamKumarKanojia](https://www.linkedin.com/in/GautamKumarKanojia) | progautam54@gmail.com
